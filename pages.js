@@ -68,6 +68,34 @@ window.PAGES = (function () {
       </div>
     </section>
 
+    <section class="section" style="padding-top:64px">
+      <div class="container">
+        <div class="section-head reveal"><h2>Earn more on every deal — and keep your clients</h2><p>The tools are world-class. The economics are better. The platform is free to start.</p></div>
+        <div class="feat-grid">
+          ${[
+            ["dollar","Up to 90% commission","Earn up to 90% of the developer's commission on every closing — no desk fees, no caps."],
+            ["users","Your clients stay yours","Leads are permanently assigned to you. No poaching, no leakage — ever."],
+            ["zap","Paid in 1–3 days","Reliable, on-time payouts backed by transparent contracts."],
+            ["shield","Your brand, white-label","Branded proposals and a platform with your photo & details (Plus)."],
+          ].map(f=>`<div class="card glass hover feat reveal"><div class="ico">${icon(f[0],26)}</div><h3>${f[1]}</h3><p>${f[2]}</p></div>`).join("")}
+        </div>
+        <div class="card glass reveal" style="padding:24px;margin-top:22px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
+          <div><div class="faint up">Commission example</div><div style="font-size:18px;margin-top:4px"><b>A $500K deal</b> · 5% developer commission ($25K) → up to <b class="grad-text" style="font-size:22px">$22,500</b> in your pocket.</div></div>
+          <a href="#/dashboard" class="btn btn-primary">Start earning ${icon("arrowRight",16)}</a>
+        </div>
+        <div class="grid reveal" style="grid-template-columns:repeat(3,1fr);margin-top:22px">
+          ${D.dealExamples.map(d=>`<div class="card hover" style="padding:20px"><div class="row between"><span class="badge gray">${d.market}</span><span class="faint" style="font-size:12px">${d.value}</span></div><div style="font-weight:600;margin:10px 0 8px">${d.project}</div><div class="faint up">Agent earned</div><div class="grad-text" style="font-family:var(--font-display);font-weight:800;font-size:24px">${d.earned}</div></div>`).join("")}
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:36px 0">
+      <div class="container"><div class="card glass reveal" style="padding:30px;text-align:center">
+        <h2 class="grad-text" style="font-size:clamp(24px,3.6vw,40px)">Three hours of work, done in ten minutes.</h2>
+        <p class="muted" style="margin-top:8px;font-size:17px;max-width:60ch;margin-left:auto;margin-right:auto">Search 1,600+ projects, study any market like a local analyst, compare, and send a branded proposal — your AI crew handles the busywork.</p>
+      </div></div>
+    </section>
+
     <section class="section" style="padding-top:60px">
       <div class="container">
         <div class="section-head reveal"><h2>Six things at once — not a listings portal</h2><p>Market access · agent education · investment comparison · proposal generation · developer connection · deal execution.</p></div>
@@ -224,9 +252,27 @@ window.PAGES = (function () {
       <div class="row gap-2 wrap">${m.legal.steps.map((st,i)=>`<span class="badge gray">${i+1}. ${st}</span>`).join('<span class="faint">→</span>')}</div>
     </div>`;
 
+    // AI forecast + liquidity (predictive layer)
+    const fc = m.forecast, lq = m.liquidity, lqCls = lq.score >= 75 ? "bullish" : lq.score >= 50 ? "neutral" : "bearish";
+    const fSeries = [h.ppsfUSD, Math.round(h.ppsfUSD*(1+fc.y1/100)), Math.round(h.ppsfUSD*(1+fc.y3/100)), Math.round(h.ppsfUSD*(1+fc.y5/100))];
+    const forecastRisk = `<div class="grid" style="grid-template-columns:2fr 1fr">
+      <div class="card" style="padding:22px"><div class="section-title"><h3>AI price forecast</h3><span class="badge green">${icon("sparkles",12)} predictive</span></div>
+        <div class="headline-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px">
+          ${[["1-year","+"+fc.y1+"%"],["3-year","+"+fc.y3+"%"],["5-year","+"+fc.y5+"%"]].map(x=>`<div class="card hmetric"><div class="v mono" style="color:hsl(var(--emerald))">${x[1]}</div><div class="k">${x[0]} projected</div></div>`).join("")}
+        </div>${C.area(fSeries,{h:180,labels:["Now","1y","3y","5y"]})}</div>
+      <div class="card" style="padding:22px"><div class="section-title"><h3>Liquidity</h3></div>
+        <div style="text-align:center">${U.sentimentGauge(lq.score,lqCls)}<div style="font-weight:700;margin-top:6px">${lq.label}</div><div class="faint" style="font-size:12px">resale speed & buyer depth</div></div></div>
+    </div>`;
+
+    // developer reliability ratings
+    const devs = D.developers.filter(d => d.market === m.id);
+    const devRel = `<div class="card" style="padding:22px"><div class="section-title"><h3>Developer reliability</h3><span class="faint" style="font-size:12px">AI-rated on delivery, quality & track record</span></div>
+      <table class="table"><thead><tr><th>Developer</th><th>Tier</th><th>Reliability</th><th class="tar">Score</th></tr></thead>
+      <tbody>${devs.map(d=>`<tr><td style="font-weight:600">${d.name} ${d.verified?`<span class="badge green" style="margin-left:6px">${icon("shield",11)} Verified</span>`:""}</td><td class="muted">${d.tier}</td><td style="width:170px"><div class="progress"><span style="width:${d.reliability}%"></span></div></td><td class="tar mono" style="font-weight:700">${d.reliability}</td></tr>`).join("")}</tbody></table></div>`;
+
     // FREE = surface (sentiment + headline). PRO/PLUS = the deep study.
-    const deep = ENT.lock(`<div class="stack gap-6">${charts}${infra}${txns}${mobility}${zones}${legal}</div>`,
-      "marketStudyFull", { title:"Full Market Study is a Pro feature", sub:"Free shows the sentiment & headline. Pro unlocks the infrastructure tracker, live transactions, RTA road-impact, growth zones, legal process and deep ROI models — the moment you have a real client." });
+    const deep = ENT.lock(`<div class="stack gap-6">${charts}${forecastRisk}${infra}${txns}${mobility}${zones}${devRel}${legal}</div>`,
+      "marketStudyFull", { title:"Full Market Study is a Pro feature", sub:"Free shows the sentiment & headline. Pro unlocks the AI price forecast, liquidity score, developer reliability, infrastructure tracker, live transactions, growth zones and legal process — the moment you have a real client." });
 
     return U.shell("markets", `
       ${headerBar}
@@ -748,10 +794,11 @@ window.PAGES = (function () {
   function initLanding() {
     const el = document.getElementById("heroRot"); if (!el) return;
     const phrases = [
+      "Earn up to 90% of the developer's commission",
       "Study any market like a local analyst",
       "Compare Dubai, Bali, Georgia & Oman in seconds",
       "Send a branded proposal in two minutes",
-      "Capture & qualify leads while you sleep",
+      "Keep your clients — they're yours, for good",
       "One desk for every market on earth",
     ];
     let i = 0;

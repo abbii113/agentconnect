@@ -356,11 +356,27 @@ window.DATA = (function () {
 
   const months = ["Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May","Jun"];
 
+  /* ---- predictive layer: AI price forecast + liquidity (cumulative % over horizon) ---- */
+  const _forecast = { dubai:{y1:8,y3:26,y5:46}, bali:{y1:9,y3:28,y5:50}, georgia:{y1:6,y3:19,y5:33}, oman:{y1:8,y3:25,y5:44} };
+  const _liquidity = { dubai:{score:88,label:"High"}, bali:{score:64,label:"Moderate"}, georgia:{score:55,label:"Moderate"}, oman:{score:48,label:"Emerging"} };
+  markets.forEach(m => { m.forecast = _forecast[m.id]; m.liquidity = _liquidity[m.id]; });
+
+  /* ---- developer reliability ratings (AI-scored on delivery & track record) ---- */
+  const _rel = { emaar:96, damac:90, sobha:93, nakheel:88, binghatti:84, ellington:86, penida:80, orbi:78, almouj:89 };
+  developers.forEach(d => d.reliability = _rel[d.id] || 80);
+
+  /* ---- example deals (illustrative social proof) ---- */
+  const dealExamples = [
+    { project:"Palm Jumeirah Penthouse", market:"Dubai", value:"$9.83M", earned:"$297K" },
+    { project:"Marina 2BR Apartment",    market:"Dubai", value:"$2.35M", earned:"$72K" },
+    { project:"Uluwatu Cliff Villa",     market:"Bali",  value:"$1.95M", earned:"$65K" },
+  ];
+
   const marketById = (id) => markets.find(m => m.id === id);
   const devById = (id) => developers.find(d => d.id === id);
 
   return { img, months, markets, futureMarkets, developers, projects, inventory, paymentPlans,
            pipeline, clients, tasks, activity, myCommission, myFunnel, leadSources,
-           commissionLedger, leadRouting, academy, connectors, plans, testimonials,
+           commissionLedger, leadRouting, academy, connectors, plans, testimonials, dealExamples,
            marketById, devById };
 })();
