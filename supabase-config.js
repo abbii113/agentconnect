@@ -11,6 +11,6 @@
    (Never put the service_role key here — that one bypasses RLS.)
    ============================================================ */
 window.SUPA = {
-  url: null,        // e.g. "https://abcdxyz.supabase.co"
-  anonKey: null     // e.g. "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+  url: "https://kqbrfbuuhoybdwouspoq.supabase.co",
+  anonKey: "sb_publishable_08PiJJSjBGnnIQIIJmg3xg_UW2CrpIs"   // publishable (public) key — safe in client, protected by RLS
 };
