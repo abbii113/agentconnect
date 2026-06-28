@@ -1,0 +1,13 @@
+{
+  "_comment": "Example Apify input. Best: use a portal-specific actor (search the Apify Store for 'Bayut' / 'Property Finder' / your market's portal). If none fits, use apify/website-content-crawler with a developer's projects page as below. Edit startUrls + market.",
+  "_market": "dubai",
+  "startUrls": [
+    { "url": "https://www.example-developer.com/projects" }
+  ],
+  "maxCrawlPages": 40,
+  "maxCrawlDepth": 2,
+  "crawlerType": "playwright:firefox",
+  "saveMarkdown": true,
+  "removeCookieWarnings": true,
+  "schedule": "daily (set in Apify → Schedules, not here)"
+}
